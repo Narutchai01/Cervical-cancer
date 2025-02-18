@@ -1,101 +1,153 @@
-import Image from "next/image";
+"use client";
+import { Idata } from "@/interfaces/data";
+import { useState } from "react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [input, setInput] = useState<Idata>({
+    menopausal_status: null,
+    platelets: null,
+    albumin: null,
+    globulin: null,
+    diameter_of_ovary: null,
+    solid: null,
+    papillary_projection: null,
+    cyst_wall: null,
+    septum: null,
+    ascites: null,
+    ca_125: null,
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInput({
+      ...input,
+      [name]: value,
+    });
+  };
+
+  const cbc_us_ca125 = (
+    Menopausal: number,
+    P: number,
+    Solid: number,
+    Papillary: number,
+    Septum: number,
+    CA125: number
+  ): number => {
+    const w =
+      -6.527 +
+      0.874 * Menopausal +
+      0.008 * P +
+      1.484 * Solid +
+      2.446 * Papillary +
+      1.389 * Septum +
+      0.002 * CA125;
+
+    return Math.exp(w) / (1 + Math.exp(w));
+  };
+
+  const us_ca125 = (
+    Menopausal: number,
+    Solid: number,
+    Papillary: number,
+    Septum: number,
+    CA125: number
+  ) => {
+    const w =
+      -4.06 +
+      0.749 * Menopausal +
+      1.832 * Solid +
+      2.14 * Papillary +
+      1.173 * Septum +
+      0.003 * CA125;
+
+    return Math.exp(w) / (1 + Math.exp(w));
+  };
+
+  const cbc_us = (
+    Menopausal: number,
+    P: number,
+    Solid: number,
+    Papillary: number,
+    Septum: number
+  ) => {
+    const w =
+      -7.316 +
+      1.263 * Menopausal +
+      0.009 * P +
+      2.219 * Solid +
+      2.541 * Papillary +
+      1.313 * Septum;
+
+    return Math.exp(w) / (1 + Math.exp(w));
+  };
+
+  const us = (
+    Menopausal: number,
+    Solid: number,
+    Papillary: number,
+    Cystwall: number,
+    Septum: number
+  ) => {
+    const w =
+      -4.308 +
+      0.864 * Menopausal +
+      2.073 * Solid +
+      1.939 * Papillary +
+      1.172 * Cystwall +
+      1.099 * Septum;
+    return Math.exp(w) / (1 + Math.exp(w));
+  };
+
+  const lft_ca125 = (
+    Menopausal: number,
+    Albumin: number,
+    Globulin: number,
+    CA125: number
+  ) => {
+    const w =
+      -1.369 +
+      0.536 * Menopausal -
+      0.556 * Albumin +
+      0.565 * Globulin +
+      0.003 * CA125;
+
+    return Math.exp(w) / (1 + Math.exp(w));
+  };
+
+  console.log("สูตร 1 ", cbc_us_ca125(1, 247, 1, 1, 1, 43.9).toFixed(4));
+  console.log("สูตร 2 ", us_ca125(1, 1, 1, 1, 43.9).toFixed(4));
+  console.log("สูตร 3 ", cbc_us(1, 247, 1, 1, 1).toFixed(4));
+  console.log("สูตร 4 ", us(1, 1, 1, 1, 1).toFixed(4));
+  console.log("สูตร 5 ", lft_ca125(1, 4.6, 3.7, 43.9).toFixed(4));
+
+  return (
+    <div>
+      <form>
+        <input
+          type="number"
+          placeholder="albuin"
+          name="albuin"
+          onChange={onChange}
+        />
+        <input
+          type="text"
+          placeholder="platelets"
+          name="platelets"
+          onChange={onChange}
+        />
+        <input
+          type="text"
+          placeholder="globulin"
+          name="globulin"
+          onChange={onChange}
+        />
+        <input
+          type="text"
+          placeholder="globulin"
+          name="globulin"
+          onChange={onChange}
+        />
+      </form>
     </div>
   );
 }
