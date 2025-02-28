@@ -1,151 +1,93 @@
 "use client";
-import { Idata } from "@/interfaces/data";
-import { useState } from "react";
-import {
-  FormControl,
-  FormLabel,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-} from "@mui/material";
+
+import { useAnalysis } from "@/context/analysisContext";
+import { TextField } from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
+import React from "react";
+import { labelTextField, labelRadio } from "@/data/analysis";
+import { RadioComponent } from "@/components/radio";
+import Link from "next/link";
 
 export default function Home() {
-  const [input, setInput] = useState<Idata>({
-    menopausal_status: null,
-    platelets: null,
-    albumin: null,
-    globulin: null,
-    diameter_of_ovary: null,
-    solid: null,
-    papillary_projection: null,
-    cyst_wall: null,
-    septum: null,
-    ascites: null,
-    ca_125: null,
-  });
+  const { setParameter, parameter } = useAnalysis();
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInput({
-      ...input,
-      [name]: value,
+    setParameter({
+      ...parameter,
+      [name]: parseFloat(value),
     });
   };
 
-  const cbc_us_ca125 = (
-    Menopausal: number,
-    P: number,
-    Solid: number,
-    Papillary: number,
-    Septum: number,
-    CA125: number
-  ): number => {
-    const w =
-      -6.527 +
-      0.874 * Menopausal +
-      0.008 * P +
-      1.484 * Solid +
-      2.446 * Papillary +
-      1.389 * Septum +
-      0.002 * CA125;
+  const check = [
+    parameter["platelets"],
+    parameter["albumin"],
+    parameter["globulin"],
+    parameter["ca_125"],
+    parameter["menopausal_status"],
+    parameter["solid"],
+    parameter["papillary_projection"],
+    parameter["cyst_wall"],
+    parameter["septum"]
+  ];
 
-    return Math.exp(w) / (1 + Math.exp(w));
+
+  const checkValue = () => {
+    return check.filter(value => value != null).length;
   };
 
-  const us_ca125 = (
-    Menopausal: number,
-    Solid: number,
-    Papillary: number,
-    Septum: number,
-    CA125: number
-  ) => {
-    const w =
-      -4.06 +
-      0.749 * Menopausal +
-      1.832 * Solid +
-      2.14 * Papillary +
-      1.173 * Septum +
-      0.003 * CA125;
 
-    return Math.exp(w) / (1 + Math.exp(w));
-  };
-
-  const cbc_us = (
-    Menopausal: number,
-    P: number,
-    Solid: number,
-    Papillary: number,
-    Septum: number
-  ) => {
-    const w =
-      -7.316 +
-      1.263 * Menopausal +
-      0.009 * P +
-      2.219 * Solid +
-      2.541 * Papillary +
-      1.313 * Septum;
-
-    return Math.exp(w) / (1 + Math.exp(w));
-  };
-
-  const us = (
-    Menopausal: number,
-    Solid: number,
-    Papillary: number,
-    Cystwall: number,
-    Septum: number
-  ) => {
-    const w =
-      -4.308 +
-      0.864 * Menopausal +
-      2.073 * Solid +
-      1.939 * Papillary +
-      1.172 * Cystwall +
-      1.099 * Septum;
-    return Math.exp(w) / (1 + Math.exp(w));
-  };
-
-  const lft_ca125_2 = (
-    Menopausal: number,
-    Albumin: number,
-    Globulin: number,
-    CA125: number
-  ) => {
-    const w =
-      -2.783 +
-     ( 0.8 * Menopausal) +
-      (0.256 * Globulin) +
-      (0.003 * CA125);
-
-    return Math.exp(w) / (1 + Math.exp(w));
-  };
-
-  // console.log("สูตร 1 ", cbc_us_ca125(1, 471, 1, 1, 0, 3988));
-  // console.log("สูตร 2 ", us_ca125(1, 1, 1, 0, 3988));
-  // console.log("สูตร 3 ", cbc_us(1, 471, 1, 1, 0));
-  // console.log("สูตร 4 ", us(1, 1, 1, 1, 0));
-  // console.log("สูตร 5 ", lft_ca125(1, 2.9, 3.1, 3988));
-  console.log("_____________________________________");
-  console.log("สูตร 1 ", cbc_us_ca125(1,493,1,0,0,751));
-  console.log("สูตร 2 ", us_ca125(1,1,0,0,751));
-  console.log("สูตร 3 ", cbc_us(1,493,1,0,0));
-  console.log("สูตร 4 ", us(1,1,0,1,0));
-  console.log("สูตร 5 ", lft_ca125_2(1,3.1,4.4,751));
+  console.log(checkValue() < 3 );
+  
 
   return (
-    <div>
-      <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          defaultValue="female"
-          name="radio-buttons-group"
-        >
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
-        </RadioGroup>
-      </FormControl>
+    <div className="p-4">
+      <div className="container mx-auto px-4 md:px-16 lg:px-64">
+        <form className="flex flex-col gap-4">
+          {labelTextField.map((textField, index: number) => {
+            return (
+              <TextField
+                key={index}
+                variant="outlined"
+                className="w-full"
+                name={textField.name}
+                label={textField.label}
+                type="number"
+                onChange={handleChange}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="start">
+                        {textField.unit}
+                      </InputAdornment>
+                    ),
+                  },
+                  inputLabel: { shrink: check[index] != null ? true : false },
+                }}
+              />
+            );
+          })}
+
+          <div className="flex flex-col gap-4">
+            {labelRadio.map((radio, index: number) => (
+              <RadioComponent
+                key={index}
+                label={radio.label}
+                name={radio.name}
+                onChange={handleChange}
+              />
+            ))}
+          </div>
+
+          <div className="p-4 items-center justify-center flex">
+            <Link href="/analysis">
+              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                วิเคราะห์ผล
+              </button>
+            </Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
