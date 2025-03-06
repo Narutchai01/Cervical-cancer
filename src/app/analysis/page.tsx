@@ -22,10 +22,7 @@ Chart.register(
 );
 
 export default function AnalysisPage() {
-  const { chartResult , result} =
-    useAnalysis();
-
-  
+  const { chartResult, result } = useAnalysis();
 
   const chartData = {
     labels: [
@@ -74,11 +71,7 @@ export default function AnalysisPage() {
   return (
     <>
       <div className="container mx-auto p-4">
-        <h1>{`${result().toFixed(2)} %`}</h1>
-        <h1 className="text-2xl font-bold text-center">Analysis</h1>
-        <div className="mt-4">
-          <Bar data={chartData} options={options} />
-        </div>
+        
       </div>
     </>
   );
