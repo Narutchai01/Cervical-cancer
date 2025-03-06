@@ -37,7 +37,6 @@ export default function Home() {
   };
 
 
-  console.log(checkValue() < 3 );
   
 
   return (
@@ -80,9 +79,12 @@ export default function Home() {
           </div>
 
           <div className="p-4 items-center justify-center flex">
-            <Link href="/analysis">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                วิเคราะห์ผล
+            <Link href="/analysis" className={`disabled:opacity-50 ${checkValue() === 0 ? 'pointer-events-none' : ''}`}>
+              <button 
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+              disabled={checkValue() === 0}
+              >
+              วิเคราะห์ผล
               </button>
             </Link>
           </div>

@@ -25,13 +25,7 @@ export default function AnalysisPage() {
   const { chartResult, result } = useAnalysis();
 
   const chartData = {
-    labels: [
-      "CBC + US + CA-125",
-      "US + CA-125",
-      "CBC + US",
-      "US",
-      "LFT + CA-125",
-    ],
+    labels: ["สูตร 1", "สูตร 2", "สูตร 3", "สูตร 4", "สูตร 5"],
     datasets: [
       {
         label: "My First Dataset",
@@ -60,7 +54,9 @@ export default function AnalysisPage() {
   };
 
   const options = {
+    indexAxis: "y" as const, // This makes the bar chart horizontal
     responsive: true,
+    maintainAspectRatio: false, // Add this line to allow custom height
     plugins: {
       legend: {
         position: "top" as const,
@@ -71,7 +67,17 @@ export default function AnalysisPage() {
   return (
     <>
       <div className="container mx-auto p-4">
-        
+        <div className="flex flex-col justify-center items-center w-full gap-y-2">
+          <h1 className="text-2xl md:text-4xl lg:text-6xl font-semibold text-center">
+            คุณมีโอกาสเป็น มะเร็งปากมดลูก
+          </h1>
+          <div className="border-8 rounded-full font-bold size-32 text-3xl flex justify-center items-center border-red-400 p-2 md:p-4 lg:p-6">
+            <h1>{result().toFixed(0)}%</h1>
+          </div>
+          <div className="h-64 md:h-80 lg:h-96 w-full">
+            <Bar data={chartData} options={options} />
+          </div>
+        </div>
       </div>
     </>
   );
